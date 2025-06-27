@@ -1,0 +1,115 @@
+.container {
+ 
+  background: #f9f9f9;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  width: 100%;
+
+
+}
+
+.content{
+  margin: 0 20px;
+  overflow-y: scroll;
+
+}
+
+
+
+.header{
+ background-color: #2051e5;
+
+ border-bottom: 1px solid #ddd;
+ border-bottom-left-radius: 20px;
+ border-bottom-right-radius: 20px;
+padding-left: 20px;
+padding-top: 10px;
+margin-bottom: 15px;
+position: sticky;
+top: 0;
+
+
+
+}
+.header img{
+  width: 108px;
+  z-index: 1;
+  margin-bottom: 20px
+  
+}
+.greeting{
+  
+  color: white;
+  line-height: 20px;
+
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 12px;
+ 
+}
+
+.timings{
+  background-color: #D0D0D0;
+  border-radius: 8px;
+  line-height: 10px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  padding-right: 110px;
+  border-radius: 20px;
+ 
+
+}
+
+.break{
+    background-color: #D0D0D0;
+  border-radius: 8px;
+  line-height:10px;
+  
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-radius: 20px;
+
+}
+.breakDetails{
+ display: flex;
+  justify-content: space-between;
+ padding-right: 20px;
+
+
+
+  
+
+}
+
+.breakTime{
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  padding-left: 30px;
+ 
+}
+
+.activity{
+   background-color: #D0D0D0;
+  border-radius: 8px;
+  line-height: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-evenly;
+ 
+  border-radius: 20px;
+
+  
+
+}
+
+.activity li{
+  list-style: disc;
+  
+  padding: 10px;
+}

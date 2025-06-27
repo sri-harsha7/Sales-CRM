@@ -1,0 +1,81 @@
+.container {
+  background: #fefefe;
+  min-height: 100vh;
+  
+  padding-bottom: 80px;
+}
+
+.searchContainer {
+  margin-bottom: 16px;
+  padding: 15px 16px;
+  border-radius: 12px;
+}
+
+
+
+.scheduleList {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  background: #f7f7f7;
+  border-radius: 24px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.highlight {
+  background: #1f50f3;
+  color: white;
+}
+
+.cardLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.type {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.phone {
+  font-size: 14px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.icon {
+  font-size: 14px;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.cardRight {
+  text-align: right;
+}
+
+.dateLabel {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.date {
+  font-size: 14px;
+  font-weight: 600;
+}

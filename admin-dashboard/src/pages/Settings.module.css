@@ -1,0 +1,56 @@
+.settingsContainer{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 20px;
+     border: 1px solid black;
+     border-radius: 10px;
+     position: relative;
+}
+.settings{
+    width: 50%;
+
+    padding:  20px;
+    text-align: left;
+   
+   
+    
+}
+.edit{
+    font-size: 15px;
+    border-bottom: 1px solid gray;
+    margin-bottom: 20px;
+
+}
+
+
+
+.form input[type="text"],.form  input[type="email"], .form input[type="password"]{
+    width: 100%;
+    padding: 13px 20px;
+    margin: 5px 0;
+    display: inline-block;
+    border: 1px solid gray;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.saveBtn{
+    width: 222px;
+    height: 50px;
+    background-color: #D9D9D9;
+  
+    color: #636060;
+    border: none;
+    cursor: pointer;
+   
+    text-align: center;
+    border-radius: 17px ;
+
+
+}
+.button{
+    position: absolute;
+    right: 30px;
+    bottom: 10px;
+}

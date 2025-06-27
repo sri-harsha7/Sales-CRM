@@ -1,0 +1,77 @@
+.container {
+  background-color: #ffffff;
+ margin-top: 20px;
+   
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+  
+}
+
+
+.table {
+  width: 100%;
+ border-collapse:collapse ;
+ outline: none;
+ border: 1px solid #e5e7eb;
+ border-radius: 20px;
+ 
+  font-size: 0.9rem;
+ 
+
+}
+
+.thead {
+  text-align: left;
+  padding: 0.75rem;
+  color: #6b7280;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
+  
+}
+
+.tbody {
+  text-align: left;
+  padding: 0.75rem;
+ 
+ border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+  border-collapse: collapse;
+ 
+}
+
+.nameEmail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.avatar {
+  width: 2rem;
+  height: 2rem;
+  background-color: #9ca3af;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.name {
+  font-weight: 600;
+}
+
+.email {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.activeDot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: #10b981;
+  border-radius: 9999px;
+  margin-right: 0.3rem;
+}

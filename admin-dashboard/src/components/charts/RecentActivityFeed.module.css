@@ -1,0 +1,22 @@
+.recentActivity {
+    width: 400px;
+    height: 300px;
+    border: 1px solid black;
+    overflow-y: scroll;
+    border-radius:  10px;
+   
+}
+.activityList {
+    list-style-type:disc;
+    padding: 10px 30px;
+}
+
+.activityList li{
+    margin-bottom: 10px;
+}
+
+.title{
+    text-align: left;
+    padding : 10px 30px;
+
+}

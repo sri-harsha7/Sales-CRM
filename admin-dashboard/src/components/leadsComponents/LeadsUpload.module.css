@@ -1,0 +1,100 @@
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  width: 400px;
+  position: relative;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  cursor: pointer;
+}
+
+.uploadBox {
+  border: 1px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  margin: 16px 0;
+  border-radius: 8px;
+}
+
+.uploadLabel {
+  cursor: pointer;
+}
+
+.browseBtn {
+  margin-top: 8px;
+  background-color: #f3f4f6;
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.fileDetails {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #6b7280;
+}
+
+.removeFile {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.cancelBtn {
+  background: #f3f4f6;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.nextBtn {
+  background: #111827;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.confirmationModal {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.confirmActions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}

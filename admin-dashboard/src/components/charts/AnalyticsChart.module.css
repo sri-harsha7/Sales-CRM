@@ -1,0 +1,11 @@
+.analyticsChart{
+    border: 1px solid black;
+    border-radius: 10px;
+    width: 100%;
+   
+}
+
+.title{
+    text-align: left;
+    padding : 10px 30px;
+}

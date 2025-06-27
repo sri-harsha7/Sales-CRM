@@ -1,0 +1,28 @@
+.header{
+ background-color: #2051e5;
+
+ border-bottom: 1px solid #ddd;
+ border-bottom-left-radius: 20px;
+ border-bottom-right-radius: 20px;
+padding-left: 20px;
+padding-top: 20px;
+
+position: sticky;
+ top: 0;
+ padding-bottom: 5px;
+
+}
+.header img{
+  width: 108px;
+  z-index: 1;
+  margin-bottom: 10px
+  
+}
+
+.pageName p {
+  color: #fff;
+  font-size: 25px;
+  font-weight:600;
+
+
+}

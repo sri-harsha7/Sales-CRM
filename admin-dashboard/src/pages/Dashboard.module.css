@@ -1,0 +1,43 @@
+.cards{
+   display: flex ;
+   align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+   
+}
+.analytics{
+    
+    display: flex;
+    flex-direction: column;
+   
+
+   
+}
+
+.analyticsCards{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 50px;
+}
+/* table{
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 10px ;
+    border-collapse: collapse;
+    margin: 35px 5px;
+    font-size: 20px;
+} */
+th, td{
+    border: 1px solid lightgray;
+    padding: 5px;
+    text-align: left;
+}
+th{
+    background-color: lightgray;
+}
+
+.tables{
+    width: 100%;
+    border: none;
+}
