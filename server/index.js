@@ -3,9 +3,13 @@ const app = express();
 const env = require("dotenv");
 env.config();
 const authRoute = require("./routes/authRoute");
+
 const cors = require("cors");
+const employeeRoute = require("./routes/employeeRoute");
+const adminRoute = require("./routes/adminRoute");
 
 const connectDb = require("./config/DB");
+
 app.use(cors());
 
 app.use(express.json());
@@ -13,6 +17,8 @@ app.use(express.json());
 connectDb();
 
 app.use("/auth", authRoute);
+app.use("/employee", employeeRoute);
+app.use("/admin", adminRoute);
 
 app.get("/", (req, res) => {
   res.json({ message: "Server is running on port 3000" });

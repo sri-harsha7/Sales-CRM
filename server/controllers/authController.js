@@ -1,27 +1,63 @@
 const User = require("../models/User");
+const Employee = require("../models/Employee");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
 
-const login = (req, res) => {
-  res.send("Login");
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  const employee = await Employee.findOne({ email });
+  if (!employee) {
+    return res.status(400).json({ message: "Employee not found" });
+  }
+  if (employee.password === password) {
+    const token = jwt.sign({ id: employee._id }, "secret");
+    return res.status(200).json({ message: "Login successful", token });
+  } else {
+    res.status(400).json({ message: "Incorrect password" });
+  }
 };
 
 const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { firstName, lastName, email, location, language } = req.body;
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // Ensure all fields are present
+    if (!firstName || !lastName || !email || !location || !language) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-    const user = new User({
-      name,
+    // Check if employee already exists
+    const existingEmployee = await Employee.findOne({ email });
+    if (existingEmployee) {
+      return res.status(400).json({ message: "Employee already exists" });
+    }
+
+    // Create new employee
+    const newEmployee = new Employee({
+      firstName,
+      lastName,
       email,
-      password: hashedPassword,
+      location,
+      language,
+      password: lastName, // dummy password
+      id: Date.now(),
+      employeeId:
+        "#" + Math.random().toString(36).substring(2, 10).toUpperCase(),
+      assignedLeads: 0,
+      closedLeads: 0,
+      status: "Active",
     });
-    let User = await user.save();
-    res.status(201).send("User Created Successfully", User);
+
+    const savedEmployee = await newEmployee.save(); // ✅ this is async
+
+    res
+      .status(200)
+      .json({
+        message: "Employee registered successfully",
+        employee: savedEmployee,
+      });
   } catch (err) {
-    res.send(err);
+    console.error("❌ Registration error:", err);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 

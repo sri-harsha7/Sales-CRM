@@ -1,37 +1,10 @@
 import React from "react";
 import styles from "./Table.module.css";
-
-const data = [
-  {
-    id: 1,
-    name: "Tanner Finsha",
-    email: "Tannerfisher@gmail.com",
-    employeeId: "#23454GH6JYT6",
-    assignedLeads: 5,
-    closedLeads: 2,
-    status: "Active",
-  },
-  {
-    id: 2,
-    name: "Emeto Winner",
-    email: "Emetowinner@gmail.com",
-    employeeId: "#23454GH6JYT6",
-    assignedLeads: 3,
-    closedLeads: 1,
-    status: "Active",
-  },
-  {
-    id: 3,
-    name: "Tassy Omah",
-    email: "Tassyomah@gmail.com",
-    employeeId: "#23454GH6JYT6",
-    assignedLeads: 6,
-    closedLeads: 4,
-    status: "Active",
-  },
-];
+import { useAdminContext } from "../config/AdminContext";
 
 const Table = () => {
+  const { employees } = useAdminContext();
+  const data = employees;
   return (
     <div className={styles.container}>
       <table className={styles.table}>
@@ -49,14 +22,22 @@ const Table = () => {
             <tr key={emp.id}>
               <td>
                 <div className={styles.nameEmail}>
-                  <div className={styles.avatar}>{emp.name.charAt(0)}</div>
+                  <div className={styles.avatar}>{emp.firstName.charAt(0)}</div>
                   <div>
-                    <div className={styles.name}>{emp.name}</div>
-                    <div className={styles.email}>{emp.email}</div>
+                    <div className={styles.fullName}>
+                      <div className={styles.name}>{emp.firstName}</div>
+                      <div className={styles.name}>{emp.lastName}</div>
+                    </div>
+                    <div>
+                      <div className={styles.email}>{emp.email}</div>
+                    </div>
                   </div>
                 </div>
               </td>
-              <td>{emp.employeeId}</td>
+              <td>
+                {"#"}
+                {emp._id.trim().slice(0, 7)}
+              </td>
               <td>{emp.assignedLeads}</td>
               <td>{emp.closedLeads}</td>
               <td>

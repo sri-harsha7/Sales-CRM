@@ -7,7 +7,7 @@ import Leads from "./pages/Leads";
 import Schedule from "./pages/Schedule";
 import Profile from "./pages/Profile";
 import NavBar from "./components/NavBar";
-import Login from ".//Login";
+import Login from "./pages/Login";
 
 const App = () => {
   return (
