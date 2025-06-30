@@ -8,6 +8,7 @@ const {
   getLeads,
   uploadLeads,
   getLeadBatches,
+  deleteLeadBatch,
 } = require("../controllers/leadsController");
 
 // POST: Add new lead
@@ -21,5 +22,8 @@ router.get("/", getLeads); // ✅ correct function
 
 // GET: Fetch lead batches (admin)
 router.get("/batches", getLeadBatches);
+
+// DELETE: Delete lead (admin)
+router.delete("/batches/:batchName", deleteLeadBatch);
 
 module.exports = router;

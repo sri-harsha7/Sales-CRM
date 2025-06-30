@@ -1,26 +1,38 @@
-// import React, { useState, useRef } from "react";
+// import React, { useState, useEffect, useRef } from "react";
 // import styles from "./Leads.module.css";
 // import LeadsUpload from "../components/leadsComponents/LeadsUpload";
 // import DeleteLead from "../components/leadsComponents/DeleteLead";
-
-// const initialLeads = [
-//   {
-//     id: "01",
-//     name: "March Leads",
-//     date: "2025-03-01",
-//     totalLeads: 250,
-//     assignedLeads: 213,
-//     unassignedLeads: 30,
-//   },
-// ];
+// import { useAdminContext } from "../config/AdminContext";
 
 // const Leads = () => {
-//   const [leads, setLeads] = useState(initialLeads);
+//   const [leads, setLeads] = useState([]);
 //   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 //   const [showUploadModal, setShowUploadModal] = useState(false);
 //   const [showDeleteModal, setShowDeleteModal] = useState(false);
 //   const [leadToDelete, setLeadToDelete] = useState(null);
 //   const fileInputRef = useRef(null);
+
+//   // 👇 FETCH LEADS FROM API
+//   const fetchLeadBatches = async () => {
+//     try {
+//       const res = await fetch(
+//         `${import.meta.env.VITE_BACKEND_URL}/leads/batches`
+//       );
+//       const data = await res.json();
+//       if (data.success) {
+//         setLeads(data.data);
+//       } else {
+//         console.error("Failed to fetch leads");
+//       }
+//     } catch (err) {
+//       console.error("❌ Error fetching lead batches:", err);
+//     }
+//   };
+
+//   // 👇 Fetch leads when page loads
+//   useEffect(() => {
+//     fetchLeadBatches();
+//   }, []);
 
 //   const handleSort = (key) => {
 //     let direction = "asc";
@@ -59,6 +71,9 @@
 //   const addNewLead = (newLead) => {
 //     setLeads((prev) => [...prev, newLead]);
 //   };
+
+//   const { DeleteLead } = useAdminContext();
+//   DeleteLead(leadToDelete);
 
 //   return (
 //     <div className={styles.leads}>
@@ -131,7 +146,10 @@
 
 //       <LeadsUpload
 //         show={showUploadModal}
-//         onClose={() => setShowUploadModal(false)}
+//         onClose={() => {
+//           setShowUploadModal(false);
+//           fetchLeadBatches(); // 👈 Refresh after uploading
+//         }}
 //         onAddLead={addNewLead}
 //         fileInputRef={fileInputRef}
 //       />
@@ -152,6 +170,7 @@ import React, { useState, useEffect, useRef } from "react";
 import styles from "./Leads.module.css";
 import LeadsUpload from "../components/leadsComponents/LeadsUpload";
 import DeleteLead from "../components/leadsComponents/DeleteLead";
+import { useAdminContext } from "../config/AdminContext";
 
 const Leads = () => {
   const [leads, setLeads] = useState([]);
@@ -161,7 +180,8 @@ const Leads = () => {
   const [leadToDelete, setLeadToDelete] = useState(null);
   const fileInputRef = useRef(null);
 
-  // 👇 FETCH LEADS FROM API
+  const { deleteLead } = useAdminContext(); // ✅ use correct function name
+
   const fetchLeadBatches = async () => {
     try {
       const res = await fetch(
@@ -178,7 +198,6 @@ const Leads = () => {
     }
   };
 
-  // 👇 Fetch leads when page loads
   useEffect(() => {
     fetchLeadBatches();
   }, []);
@@ -211,10 +230,16 @@ const Leads = () => {
     setShowDeleteModal(true);
   };
 
-  const confirmDeleteLead = () => {
-    setLeads((prev) => prev.filter((lead) => lead.id !== leadToDelete.id));
-    setShowDeleteModal(false);
-    setLeadToDelete(null);
+  const confirmDeleteLead = async () => {
+    try {
+      await deleteLead(leadToDelete.name); // 👈 pass batchName
+      setLeads((prev) => prev.filter((l) => l.name !== leadToDelete.name));
+    } catch (err) {
+      console.error("❌ Error deleting lead:", err);
+    } finally {
+      setShowDeleteModal(false);
+      setLeadToDelete(null);
+    }
   };
 
   const addNewLead = (newLead) => {
@@ -294,7 +319,7 @@ const Leads = () => {
         show={showUploadModal}
         onClose={() => {
           setShowUploadModal(false);
-          fetchLeadBatches(); // 👈 Refresh after uploading
+          fetchLeadBatches(); // refresh after upload
         }}
         onAddLead={addNewLead}
         fileInputRef={fileInputRef}

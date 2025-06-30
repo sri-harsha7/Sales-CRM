@@ -258,6 +258,21 @@ export const AdminProvider = ({ children }) => {
     }
   };
 
+  //deleteLeads from Server
+
+  const deleteLead = async (batchName) => {
+    try {
+      await fetch(`${URL}/leads/batches/${encodeURIComponent(batchName)}`, {
+        method: "DELETE",
+      });
+      setLeads((prev) => prev.filter((lead) => lead.name !== batchName));
+    } catch (err) {
+      console.error("Error deleting lead batch:", err);
+    }
+  };
+
+  // Delete employee from local state only
+
   const deleteEmployee = (id) => {
     setEmployees((prev) => prev.filter((emp) => emp._id !== id));
   };
@@ -270,7 +285,14 @@ export const AdminProvider = ({ children }) => {
 
   return (
     <AdminContext.Provider
-      value={{ employees, addEmployee, deleteEmployee, admins, leads }}
+      value={{
+        employees,
+        addEmployee,
+        deleteEmployee,
+        admins,
+        leads,
+        deleteLead,
+      }}
     >
       {children}
     </AdminContext.Provider>

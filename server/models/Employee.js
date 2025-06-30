@@ -6,11 +6,11 @@ const employeeSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   password: String,
   location: String,
-  language: { type: String },
+  language: String,
   id: Number,
   employeeId: String,
-  assignedLeads: Number,
-  closedLeads: Number,
+  assignedLeads: { type: Number, default: 0 },
+  closedLeads: { type: Number, default: 0 },
   status: { type: String, default: "Active" },
 });
 

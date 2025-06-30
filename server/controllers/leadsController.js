@@ -1,113 +1,33 @@
-// const Lead = require("../models/Leads");
-// const Employee = require("../models/Employee");
-// const fs = require("fs");
-// const csv = require("csv-parser");
-// const path = require("path");
-// const multer = require("multer");
-
-// const upload = multer({ dest: "uploads/" });
-
-// const addLead = async (req, res) => {
-//   try {
-//     const newLead = new Lead(req.body);
-//     await newLead.save();
-//     res
-//       .status(201)
-//       .json({ success: true, message: "Lead added", data: newLead });
-//   } catch (err) {
-//     res.status(500).json({ success: false, message: err.message });
-//   }
-// };
-// const getLead = async (req, res) => {
-//   try {
-//     const leads = await Lead.find().populate("assignedEmployee");
-//     res.json(leads);
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
-
-// const uploadLead = async (req, res) => {
-//   if (!req.file) {
-//     return res
-//       .status(400)
-//       .json({ success: false, message: "No file uploaded" });
-//   }
-
-//   const leads = [];
-
-//   // Parse CSV
-//   fs.createReadStream(req.file.path)
-//     .pipe(csv())
-//     .on("data", (row) => {
-//       // Parse and validate date
-//       const [day, month, year] = row.receivedDate.split("/");
-//       const parsedDate = new Date(`${year}-${month}-${day}`);
-//       if (isNaN(parsedDate)) return;
-
-//       leads.push({
-//         name: row.name,
-//         email: row.email,
-//         phone: row.phone,
-//         status: "Ongoing",
-//         type: row.type || "Warm",
-//         location: row.location,
-//         language: row.language,
-//         receivedDate: parsedDate,
-//       });
-//     })
-//     .on("end", async () => {
-//       try {
-//         // Get all sales employees
-//         const employees = await Employee.find();
-//         if (employees.length === 0) {
-//           return res
-//             .status(400)
-//             .json({ success: false, message: "No employees to assign leads." });
-//         }
-
-//         // Assign leads in round-robin
-//         let i = 0;
-//         const createdLeads = [];
-
-//         for (const lead of leads) {
-//           const assignedTo = employees[i % employees.length]._id;
-//           const newLead = new Lead({ ...lead, assignedTo });
-//           await newLead.save();
-//           createdLeads.push(newLead);
-//           i++;
-//         }
-
-//         // Cleanup temp file
-//         fs.unlinkSync(req.file.path);
-
-//         res.status(200).json({
-//           success: true,
-//           message: "Leads uploaded and assigned.",
-//           totalLeads: createdLeads.length,
-//           assignedLeads: createdLeads.length,
-//         });
-//       } catch (err) {
-//         console.error(err);
-//         res
-//           .status(500)
-//           .json({ success: false, message: "Server error during upload." });
-//       }
-//     });
-// };
-
-// module.exports = { addLead, getLead, uploadLead };
-
 const csv = require("csv-parser");
 const fs = require("fs");
 const Lead = require("../models/Leads");
 const Employee = require("../models/Employee");
+// const getLeads = async (req, res) => {
+//   try {
+//     const leads = await Lead.find();
+//     res.json(leads);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Error fetching leads" });
+//   }
+// };
 const getLeads = async (req, res) => {
   try {
-    const leads = await Lead.find();
-    res.json(leads);
+    const leads = await Lead.find().populate(
+      "assignedTo",
+      "firstName lastName"
+    );
+
+    const formattedLeads = leads.map((lead) => ({
+      ...lead.toObject(),
+      assignedToName: lead.assignedTo
+        ? `${lead.assignedTo.firstName} ${lead.assignedTo.lastName}`
+        : null,
+    }));
+
+    res.json(formattedLeads);
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error fetching leads:", err);
     res.status(500).json({ message: "Error fetching leads" });
   }
 };
@@ -132,7 +52,6 @@ const uploadLeads = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    // Step 1: Parse CSV rows
     fs.createReadStream(file.path)
       .pipe(csv())
       .on("data", (row) => {
@@ -146,7 +65,6 @@ const uploadLeads = async (req, res) => {
             return;
           }
 
-          // Validate enums before pushing
           const validStatus = ["Ongoing", "Closed"].includes(row.Status)
             ? row.Status
             : "Ongoing";
@@ -173,49 +91,62 @@ const uploadLeads = async (req, res) => {
         try {
           console.log("✅ Parsed rows:", csvData.length);
 
-          // Step 2: Get active employees
           const employees = await Employee.find({ status: "Active" });
           const employeeCount = employees.length;
 
-          console.log("👥 Active employees:", employeeCount);
-
           const leadsToInsert = [];
-          let assignedCount = 0;
+          const leadCountMap = {}; // { employeeId: count }
 
-          // Step 3: Distribute leads
           for (let i = 0; i < csvData.length; i++) {
             const lead = csvData[i];
             const assignedTo =
               employeeCount > 0 ? employees[i % employeeCount]._id : null;
 
-            if (assignedTo) assignedCount++;
+            if (assignedTo) {
+              leadsToInsert.push({
+                ...lead,
+                assignedTo,
+                batchName: file.originalname.replace(/\.csv$/i, ""),
+              });
 
-            leadsToInsert.push({
-              ...lead,
-              assignedTo,
-              batchName: file.originalname.replace(/\.csv$/i, ""),
-            });
+              leadCountMap[assignedTo] = (leadCountMap[assignedTo] || 0) + 1;
+            }
           }
 
-          // Step 4: Insert into DB
+          // Insert new leads
           await Lead.insertMany(leadsToInsert);
 
-          // Optional cleanup: remove file
+          // Update assignedLeads count in Employee collection
+          const updatePromises = Object.entries(leadCountMap).map(
+            async ([empId, newCount]) => {
+              const employee = await Employee.findById(empId);
+              const existingAssigned =
+                typeof employee.assignedLeads === "number"
+                  ? employee.assignedLeads
+                  : 0;
+
+              return Employee.findByIdAndUpdate(empId, {
+                assignedLeads: existingAssigned + newCount,
+              });
+            }
+          );
+          await Promise.all(updatePromises);
+
+          // Delete temp CSV
           fs.unlink(file.path, () => {});
 
-          // Step 5: Respond
           res.json({
             success: true,
             message: "Leads uploaded and assigned successfully",
             totalLeads: leadsToInsert.length,
-            assignedLeads: assignedCount,
-            unassignedLeads: leadsToInsert.length - assignedCount,
+            assignedLeads: leadsToInsert.length,
+            unassignedLeads: 0,
             newLead: {
               name: file.originalname.replace(/\.csv$/i, ""),
               date: new Date().toISOString().slice(0, 10),
               totalLeads: leadsToInsert.length,
-              assignedLeads: assignedCount,
-              unassignedLeads: leadsToInsert.length - assignedCount,
+              assignedLeads: leadsToInsert.length,
+              unassignedLeads: 0,
             },
           });
         } catch (err) {
@@ -264,5 +195,61 @@ const getLeadBatches = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch lead batches" });
   }
 };
+// const deleteLead = async (req, res) => {
+//   try {
+//     const leadId = req.params.id;
 
-module.exports = { getLeads, addLead, uploadLeads, getLeadBatches };
+//     // 1. Fetch the lead before deleting
+//     const lead = await Lead.findById(leadId);
+//     if (!lead) {
+//       return res.status(404).json({ message: "Lead not found" });
+//     }
+
+//     // 2. If assigned to an employee, update their stats
+//     if (lead.assignedTo) {
+//       const update = {};
+//       if (lead.status === "Closed") {
+//         update.closedLeads = { $inc: -1 };
+//       }
+//       update.assignedLeads = { $inc: -1 };
+
+//       await Employee.findByIdAndUpdate(lead.assignedTo, {
+//         $inc: {
+//           assignedLeads: -1,
+//           ...(lead.status === "Closed" && { closedLeads: -1 }),
+//         },
+//       });
+//     }
+
+//     // 3. Delete the lead
+//     await Lead.findByIdAndDelete(leadId);
+
+//     res.json({ success: true, message: "Lead deleted successfully" });
+//   } catch (err) {
+//     console.error("❌ Error deleting lead:", err);
+//     res.status(500).json({ message: "Failed to delete lead" });
+//   }
+// };
+
+// DELETE /leads/batch/:batchName
+const deleteLeadBatch = async (req, res) => {
+  try {
+    const batchName = req.params.batchName;
+    const result = await Lead.deleteMany({ batchName });
+    res.json({
+      success: true,
+      message: `Deleted ${result.deletedCount} leads`,
+    });
+  } catch (err) {
+    console.error("❌ Error deleting lead batch:", err);
+    res.status(500).json({ message: "Error deleting lead batch" });
+  }
+};
+
+module.exports = {
+  getLeads,
+  addLead,
+  uploadLeads,
+  getLeadBatches,
+  deleteLeadBatch,
+};
