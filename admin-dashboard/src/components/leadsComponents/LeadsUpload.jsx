@@ -14,16 +14,40 @@ const LeadsUpload = ({ show, onClose, onAddLead, fileInputRef }) => {
     setShowConfirmModal(true);
   };
 
-  const confirmUpload = () => {
-    const newLead = {
-      id: String(Date.now()),
-      name: selectedFile.name.replace(".csv", ""),
-      date: new Date().toISOString().slice(0, 10),
-      totalLeads: Math.floor(Math.random() * 500 + 100),
-      assignedLeads: Math.floor(Math.random() * 300),
-      unassignedLeads: Math.floor(Math.random() * 200),
-    };
-    onAddLead(newLead);
+  const confirmUpload = async () => {
+    if (!selectedFile) return;
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/leads/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        alert("Leads uploaded and assigned successfully!");
+
+        onAddLead({
+          id: String(Date.now()),
+          name: data.newLead.name,
+          date: data.newLead.date,
+          totalLeads: data.newLead.totalLeads,
+          assignedLeads: data.newLead.assignedLeads,
+          unassignedLeads: data.newLead.unassignedLeads,
+        });
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("Something went wrong during upload.");
+    }
+
     setShowConfirmModal(false);
     onClose();
   };
@@ -51,6 +75,8 @@ const LeadsUpload = ({ show, onClose, onAddLead, fileInputRef }) => {
               Browse files
             </button>
           </label>
+
+          {/* 👇 This must come after handleFileChange is defined */}
           <input
             type="file"
             accept=".csv"
@@ -58,6 +84,7 @@ const LeadsUpload = ({ show, onClose, onAddLead, fileInputRef }) => {
             ref={fileInputRef}
             style={{ display: "none" }}
           />
+
           {selectedFile && (
             <div className={styles.fileDetails}>
               <div>

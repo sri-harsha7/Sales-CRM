@@ -1,0 +1,5 @@
+Name,Email,Phone,Received Date,Status,Type,Language,Location,Assigned Employee
+John Doe,john.doe@example.com,+91-9876543210,2025-06-20,Open,Warm,English,Hyderabad,Rahul Sharma
+Anjali Verma,anjali.v@example.com,+91-9845123456,2025-06-25,Ongoing,Hot,Hindi,Delhi,Priya Mehta
+Suresh Iyer,suresh.iyer@example.com,+91-9012345678,2025-06-10,Closed,Cold,Tamil,Chennai,Amit Singh
+Fatima Khan,fatima.k@example.com,+91-9988776655,2025-06-15,Pending,Warm,Urdu,Mumbai,Sneha Patil

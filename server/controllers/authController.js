@@ -49,12 +49,10 @@ const register = async (req, res) => {
 
     const savedEmployee = await newEmployee.save(); // ✅ this is async
 
-    res
-      .status(200)
-      .json({
-        message: "Employee registered successfully",
-        employee: savedEmployee,
-      });
+    res.status(200).json({
+      message: "Employee registered successfully",
+      employee: savedEmployee,
+    });
   } catch (err) {
     console.error("❌ Registration error:", err);
     res.status(500).json({ message: "Internal server error" });

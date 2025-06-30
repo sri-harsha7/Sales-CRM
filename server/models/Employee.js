@@ -6,12 +6,12 @@ const employeeSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   password: String,
   location: String,
-  language: String,
+  language: { type: String },
   id: Number,
   employeeId: String,
   assignedLeads: Number,
   closedLeads: Number,
-  status: String,
+  status: { type: String, default: "Active" },
 });
 
 module.exports = mongoose.model("Employee", employeeSchema);

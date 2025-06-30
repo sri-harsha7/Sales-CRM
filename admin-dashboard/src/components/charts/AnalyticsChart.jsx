@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styles from "./AnalyticsChart.module.css";
 import {
   BarChart,
@@ -10,26 +10,49 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  { day: "Sat", percentage: 25 },
-  { day: "Sun", percentage: 35 },
-  { day: "Mon", percentage: 10 },
-  { day: "Tue", percentage: 7 },
-  { day: "Wed", percentage: 20 },
-  { day: "Thu", percentage: 55 },
-  { day: "Fri", percentage: 45 },
-];
+const getDateKey = (date) => {
+  return date.toLocaleDateString("en-IN", {
+    weekday: "short",
+  });
+};
 
-const AnalyticsChart = () => {
+const AnalyticsChart = ({ leads }) => {
+  const chartData = useMemo(() => {
+    const now = new Date();
+    const pastDays = 7 + Math.floor(Math.random() * 7); // 7–13 days
+    const dateMap = {};
+
+    for (let i = pastDays - 1; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(now.getDate() - i);
+      const key = getDateKey(d);
+      dateMap[key] = 0;
+    }
+
+    leads.forEach((lead) => {
+      if (!lead.receivedDate) return;
+      const d = new Date(lead.receivedDate);
+      const key = getDateKey(d);
+      if (dateMap.hasOwnProperty(key)) {
+        dateMap[key]++;
+      }
+    });
+
+    return Object.entries(dateMap).map(([day, count]) => ({
+      day,
+      percentage: count,
+    }));
+  }, [leads]);
+
   return (
     <div className={styles.analyticsChart}>
       <h2 className={styles.title}>Sale Analytics</h2>
       <ResponsiveContainer width="100%" height={250}>
-        <BarChart data={data}>
+        <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey="day" />
-          <YAxis tickFormatter={(value) => `${value}%`} />
-          <Tooltip formatter={(value) => `${value}%`} />
+          <YAxis />
+          <Tooltip formatter={(value) => `${value} leads`} />
           <Bar dataKey="percentage" fill="#9ca3af" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
