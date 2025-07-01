@@ -1,58 +1,93 @@
-// import React, { useState } from "react";
+// import React, { useState, useEffect } from "react";
 // import styles from "./Leads.module.css";
 // import Header from "../components/Header";
 // import SearchBar from "../components/SearchBar";
-
-// // React icons
+// import { useEmployeeContext } from "../config/EmployeeContext";
 // import { FaCalendarAlt, FaPen, FaClock, FaCheck } from "react-icons/fa";
 
 // const Leads = () => {
+//   const { employees, assignedLeads, fetchAssignedLeads } = useEmployeeContext();
+
 //   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
 //   const [openDateIndex, setOpenDateIndex] = useState(null);
 //   const [openStatusIndex, setOpenStatusIndex] = useState(null);
 //   const [selectedStatus, setSelectedStatus] = useState("");
+//   const [leads, setLeads] = useState([]);
 
-//   const [leads, setLeads] = useState([
-//     {
-//       name: "Tanner Finsha",
-//       email: "Tannerfisher@gmail.com",
-//       status: "Ongoing",
-//       date: "",
-//       time: "",
-//       error: "",
-//     },
-//     {
-//       name: "Tanner Finsha",
-//       email: "Tannerfisher@gmail.com",
-//       status: "Ongoing",
-//       date: "",
-//       time: "",
-//       error: "",
-//     },
-//     {
-//       name: "Tanner Finsha",
-//       email: "Tannerfisher@gmail.com",
-//       status: "Closed",
-//       date: "",
-//       time: "",
-//       error: "",
-//     },
-//   ]);
+//   const URL = import.meta.env.VITE_BACKEND_URL;
+
+//   useEffect(() => {
+//     if (employees.length > 0) {
+//       fetchAssignedLeads();
+//     }
+//   }, [employees]);
+
+//   useEffect(() => {
+//     setLeads(
+//       assignedLeads.map((lead) => ({
+//         ...lead,
+//         date: "",
+//         time: "",
+//         error: "",
+//         type: lead.type || "Warm",
+//       }))
+//     );
+//   }, [assignedLeads]);
 
 //   const handleSaveDateTime = () => {
 //     setOpenDateIndex(null);
 //   };
 
-//   const handleSaveStatus = (index, newStatus) => {
+//   const handleSaveStatus = async (index, newStatus) => {
 //     const updated = [...leads];
-//     const { date, time } = updated[index];
+//     const { date, time, _id } = updated[index];
 
 //     if (newStatus === "Closed" && (date || time)) {
-//       updated[index].error = "Lead can not be closed if scheduled";
+//       updated[index].error = "Lead cannot be closed if scheduled";
 //     } else {
-//       updated[index].status = newStatus;
-//       updated[index].error = "";
-//       setOpenStatusIndex(null);
+//       try {
+//         const res = await fetch(`${URL}/leads/${_id}/status`, {
+//           method: "PATCH",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({ status: newStatus }),
+//         });
+
+//         if (res.ok) {
+//           updated[index].status = newStatus;
+//           updated[index].error = "";
+//           setOpenStatusIndex(null);
+//         } else {
+//           const data = await res.json();
+//           updated[index].error = data.message || "Update failed";
+//         }
+//       } catch (err) {
+//         updated[index].error = "Network error";
+//       }
+//     }
+
+//     setLeads(updated);
+//   };
+
+//   const handleTypeChange = async (index, newType) => {
+//     const updated = [...leads];
+//     const { _id } = updated[index];
+
+//     try {
+//       const res = await fetch(`${URL}/leads/${_id}/type`, {
+//         method: "PATCH",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ type: newType }),
+//       });
+
+//       if (res.ok) {
+//         updated[index].type = newType;
+//         setOpenDropdownIndex(null);
+//       } else {
+//         const data = await res.json();
+//         console.error("Failed to update type:", data.message);
+//       }
+//     } catch (err) {
+//       console.error("Network error on type change", err);
 //     }
 
 //     setLeads(updated);
@@ -72,14 +107,14 @@
 //           <div className={styles.card} key={i}>
 //             <div
 //               className={`${styles.sideBar} ${
-//                 styles[lead.status.toLowerCase()]
+//                 styles[lead.status?.toLowerCase()]
 //               }`}
 //             ></div>
 
 //             <div className={styles.details}>
 //               <h3>{lead.name}</h3>
 //               <p className={styles.email}>@{lead.email}</p>
-//               <p className={styles.dateLabel}>date</p>
+//               <p className={styles.dateLabel}>Scheduled Date</p>
 //               <p
 //                 className={styles.date}
 //                 onClick={() => setOpenDateIndex(openDateIndex === i ? null : i)}
@@ -117,14 +152,13 @@
 //             <div className={styles.statusSection}>
 //               <div
 //                 className={`${styles.statusCircle} ${
-//                   styles[`${lead.status.toLowerCase()}Circle`]
+//                   styles[`${lead.status?.toLowerCase()}Circle`]
 //                 }`}
 //               >
 //                 {lead.status}
 //               </div>
 
 //               <div className={styles.actions}>
-//                 {/* Lead Type Dropdown */}
 //                 <div
 //                   className={styles.icon}
 //                   onClick={() =>
@@ -134,10 +168,15 @@
 //                   <FaPen />
 //                   {openDropdownIndex === i && (
 //                     <div className={styles.typeDropdown}>
-//                       <div className={styles.select}>Select</div>
-//                       <div className={styles.hot}>Hot</div>
-//                       <div className={styles.warm}>Warm</div>
-//                       <div className={styles.cold}>Cold</div>
+//                       {["Hot", "Warm", "Cold"].map((type) => (
+//                         <div
+//                           key={type}
+//                           className={styles[type.toLowerCase()]}
+//                           onClick={() => handleTypeChange(i, type)}
+//                         >
+//                           {type}
+//                         </div>
+//                       ))}
 //                     </div>
 //                   )}
 //                 </div>
@@ -146,12 +185,11 @@
 //                   <FaClock />
 //                 </div>
 
-//                 {/* Status Change Popup */}
 //                 <div
 //                   className={styles.icon}
 //                   onClick={() => {
 //                     setOpenStatusIndex(openStatusIndex === i ? null : i);
-//                     setSelectedStatus(lead.status); // reset on open
+//                     setSelectedStatus(lead.status);
 //                   }}
 //                 >
 //                   <FaCheck />
@@ -208,37 +246,103 @@ const Leads = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [leads, setLeads] = useState([]);
 
+  const URL = import.meta.env.VITE_BACKEND_URL;
+
   useEffect(() => {
     if (employees.length > 0) {
-      fetchAssignedLeads(); // removed email param
+      fetchAssignedLeads();
     }
   }, [employees]);
+
   useEffect(() => {
-    console.log("🟡 Incoming assignedLeads:", assignedLeads);
     setLeads(
       assignedLeads.map((lead) => ({
         ...lead,
-        date: "",
-        time: "",
+        date: lead.date || "",
+        time: lead.time || "",
         error: "",
+        type: lead.type || "Warm",
       }))
     );
   }, [assignedLeads]);
 
-  const handleSaveDateTime = () => {
-    setOpenDateIndex(null);
+  const handleSaveDateTime = async (index) => {
+    const updated = [...leads];
+    const { _id, date, time } = updated[index];
+
+    try {
+      const res = await fetch(`${URL}/leads/${_id}/schedule`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date, time }),
+      });
+
+      if (res.ok) {
+        console.log("✅ Schedule updated");
+        updated[index].error = "";
+        setOpenDateIndex(null);
+        fetchAssignedLeads(); // refresh assigned leads
+      } else {
+        const data = await res.json();
+        updated[index].error = data.message || "Update failed";
+      }
+    } catch (err) {
+      updated[index].error = "Network error";
+    }
+
+    setLeads(updated);
   };
 
-  const handleSaveStatus = (index, newStatus) => {
+  const handleSaveStatus = async (index, newStatus) => {
     const updated = [...leads];
-    const { date, time } = updated[index];
+    const { date, time, _id } = updated[index];
 
     if (newStatus === "Closed" && (date || time)) {
-      updated[index].error = "Lead can not be closed if scheduled";
+      updated[index].error = "Lead cannot be closed if scheduled";
     } else {
-      updated[index].status = newStatus;
-      updated[index].error = "";
-      setOpenStatusIndex(null);
+      try {
+        const res = await fetch(`${URL}/leads/${_id}/status`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        });
+
+        if (res.ok) {
+          updated[index].status = newStatus;
+          updated[index].error = "";
+          setOpenStatusIndex(null);
+        } else {
+          const data = await res.json();
+          updated[index].error = data.message || "Update failed";
+        }
+      } catch (err) {
+        updated[index].error = "Network error";
+      }
+    }
+
+    setLeads(updated);
+  };
+
+  const handleTypeChange = async (index, newType) => {
+    const updated = [...leads];
+    const { _id } = updated[index];
+
+    try {
+      const res = await fetch(`${URL}/leads/${_id}/type`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: newType }),
+      });
+
+      if (res.ok) {
+        updated[index].type = newType;
+        setOpenDropdownIndex(null);
+      } else {
+        const data = await res.json();
+        console.error("Failed to update type:", data.message);
+      }
+    } catch (err) {
+      console.error("Network error on type change", err);
     }
 
     setLeads(updated);
@@ -265,7 +369,7 @@ const Leads = () => {
             <div className={styles.details}>
               <h3>{lead.name}</h3>
               <p className={styles.email}>@{lead.email}</p>
-              <p className={styles.dateLabel}>date</p>
+              <p className={styles.dateLabel}>Scheduled Date</p>
               <p
                 className={styles.date}
                 onClick={() => setOpenDateIndex(openDateIndex === i ? null : i)}
@@ -295,7 +399,7 @@ const Leads = () => {
                       setLeads(updated);
                     }}
                   />
-                  <button onClick={handleSaveDateTime}>Save</button>
+                  <button onClick={() => handleSaveDateTime(i)}>Save</button>
                 </div>
               )}
             </div>
@@ -319,10 +423,15 @@ const Leads = () => {
                   <FaPen />
                   {openDropdownIndex === i && (
                     <div className={styles.typeDropdown}>
-                      <div className={styles.select}>Select</div>
-                      <div className={styles.hot}>Hot</div>
-                      <div className={styles.warm}>Warm</div>
-                      <div className={styles.cold}>Cold</div>
+                      {["Hot", "Warm", "Cold"].map((type) => (
+                        <div
+                          key={type}
+                          className={styles[type.toLowerCase()]}
+                          onClick={() => handleTypeChange(i, type)}
+                        >
+                          {type}
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>

@@ -26,6 +26,8 @@ const leadSchema = new mongoose.Schema({
     ref: "Employee",
   },
   batchName: String,
+  date: String,
+  time: String,
 });
 
 module.exports = mongoose.model("Lead", leadSchema);
