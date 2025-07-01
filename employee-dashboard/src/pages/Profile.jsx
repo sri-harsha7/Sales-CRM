@@ -2,8 +2,18 @@
 import React from "react";
 import styles from "./Profile.module.css";
 import Header from "../components/Header";
+import { useNavigate } from "react-router-dom";
+import { useEmployeeContext } from "../config/EmployeeContext";
 
 const Profile = () => {
+  const { logout } = useEmployeeContext();
+  const nav = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    nav("/"); // Navigate to login
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -31,6 +41,11 @@ const Profile = () => {
             Save
           </button>
         </form>
+        <div>
+          <button className={styles.logoutBtn} onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
       </div>
     </div>
   );

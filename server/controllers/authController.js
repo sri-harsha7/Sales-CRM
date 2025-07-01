@@ -10,7 +10,9 @@ const login = async (req, res) => {
   }
   if (employee.password === password) {
     const token = jwt.sign({ id: employee._id }, "secret");
-    return res.status(200).json({ message: "Login successful", token });
+    return res
+      .status(200)
+      .json({ message: "Login successful", token, employee });
   } else {
     res.status(400).json({ message: "Incorrect password" });
   }

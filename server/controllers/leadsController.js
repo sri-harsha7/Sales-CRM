@@ -2,15 +2,7 @@ const csv = require("csv-parser");
 const fs = require("fs");
 const Lead = require("../models/Leads");
 const Employee = require("../models/Employee");
-// const getLeads = async (req, res) => {
-//   try {
-//     const leads = await Lead.find();
-//     res.json(leads);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: "Error fetching leads" });
-//   }
-// };
+
 const getLeads = async (req, res) => {
   try {
     const leads = await Lead.find().populate(
