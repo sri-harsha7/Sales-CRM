@@ -36,16 +36,17 @@ const Profile = () => {
 
           <label>Confirm Password</label>
           <input type="password" />
-
-          <button type="submit" className={styles.saveBtn}>
-            Save
-          </button>
+          <div className={styles.buttons}>
+            <button type="submit" className={styles.saveBtn}>
+              Save
+            </button>
+            <div>
+              <button className={styles.logoutBtn} onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
+          </div>
         </form>
-        <div>
-          <button className={styles.logoutBtn} onClick={handleLogout}>
-            Logout
-          </button>
-        </div>
       </div>
     </div>
   );

@@ -9,7 +9,11 @@ export const EmployeeProvider = ({ children }) => {
 
   useEffect(() => {
     const stored = localStorage.getItem("employee");
-    if (stored) setEmployees([JSON.parse(stored)]);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      parsed.breaks = parsed.breaks?.slice(-5); // ✅ keep 5 most recent
+      setEmployees([parsed]);
+    }
   }, []);
 
   const fetchLogin = async ({ email, password }) => {
@@ -23,10 +27,15 @@ export const EmployeeProvider = ({ children }) => {
       const data = await res.json();
 
       if (res.ok) {
-        setEmployees([data.employee]);
-        localStorage.setItem("employee", JSON.stringify(data.employee));
-        await checkIn(data.employee.email);
-        return { success: true, employee: data.employee };
+        const updatedEmployee = {
+          ...data.employee,
+          breaks: data.employee.breaks?.slice(-5), // ✅ keep 5 most recent
+        };
+
+        setEmployees([updatedEmployee]);
+        localStorage.setItem("employee", JSON.stringify(updatedEmployee));
+        await checkIn(updatedEmployee.email);
+        return { success: true, employee: updatedEmployee };
       } else {
         return { success: false, message: data.message };
       }

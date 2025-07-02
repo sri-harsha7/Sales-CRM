@@ -14,8 +14,23 @@ const Employees = () => {
     setShowModal(true);
   };
 
-  const handleDelete = (id) => {
-    deleteEmployee(id);
+  const handleDelete = async (_id) => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/employee/${_id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (res.ok) {
+        deleteEmployee(_id);
+      } else {
+        console.error("❌ Failed to delete employee");
+      }
+    } catch (err) {
+      console.error("Error deleting employee:", err);
+    }
   };
 
   const handleClose = () => {

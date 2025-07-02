@@ -23,7 +23,7 @@ app.use("/admin", adminRoute);
 app.use("/leads", leadsRoute);
 
 app.get("/", (req, res) => {
-  res.json({ message: "Server is running on port 3000" });
+  res.json({ message: "Server is running on port 3000  🚀" });
 });
 
 app.listen(3000, () => {

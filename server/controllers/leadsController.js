@@ -187,43 +187,7 @@ const getLeadBatches = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch lead batches" });
   }
 };
-// const deleteLead = async (req, res) => {
-//   try {
-//     const leadId = req.params.id;
 
-//     // 1. Fetch the lead before deleting
-//     const lead = await Lead.findById(leadId);
-//     if (!lead) {
-//       return res.status(404).json({ message: "Lead not found" });
-//     }
-
-//     // 2. If assigned to an employee, update their stats
-//     if (lead.assignedTo) {
-//       const update = {};
-//       if (lead.status === "Closed") {
-//         update.closedLeads = { $inc: -1 };
-//       }
-//       update.assignedLeads = { $inc: -1 };
-
-//       await Employee.findByIdAndUpdate(lead.assignedTo, {
-//         $inc: {
-//           assignedLeads: -1,
-//           ...(lead.status === "Closed" && { closedLeads: -1 }),
-//         },
-//       });
-//     }
-
-//     // 3. Delete the lead
-//     await Lead.findByIdAndDelete(leadId);
-
-//     res.json({ success: true, message: "Lead deleted successfully" });
-//   } catch (err) {
-//     console.error("❌ Error deleting lead:", err);
-//     res.status(500).json({ message: "Failed to delete lead" });
-//   }
-// };
-
-// DELETE /leads/batch/:batchName
 const deleteLeadBatch = async (req, res) => {
   try {
     const batchName = req.params.batchName;

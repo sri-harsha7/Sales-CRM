@@ -1,12 +1,34 @@
-# React + Vite
+# Employee Dashboard - Sales CRM
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the Employee Dashboard interface of the Sales CRM system. Sales employees can manage their assigned leads, update statuses, and record their daily activities.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- View and manage assigned leads
+- Schedule calls and update lead status
+- Mark lead type as Hot/Warm/Cold
+- Check-in / Check-out functionality
+- Start and end breaks
+- Real-time updates via backend API
+- Checkin
+  The employee login with email : email Adress and Password : LastName
+- Checkout
+  The Employee Click on Logout Button in the Profile page considered as Logout
+- Breaks
+  The Breaks are the gaps that tab has closed or go to an other Tab Considered as a Break
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React.js
+- Context API for state management
+- React Icons
+
+## Setup
+
+1. Clone the repository
+2. Install dependencies:
+   npm install
+3. To run
+   npm run dev
+4. To Build
+   npm run build

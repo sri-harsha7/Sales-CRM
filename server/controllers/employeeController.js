@@ -1,57 +1,3 @@
-// const Employee = require("../models/Employee");
-
-// const getEmployees = async (req, res) => {
-//   try {
-//     const employees = await Employee.find({});
-//     res.status(200).json(employees);
-//   } catch (error) {
-//     console.error("Error fetching employees:", error);
-//     res.status(500).json({ message: "Error fetching employees" });
-//   }
-// };
-
-// const getEmployeesById = async (req, res) => {
-//   const employee = await Employee.findById(req.params.id);
-//   res.status(200).json(employee);
-// };
-// //Checkin
-// router.post("/checkin", async (req, res) => {
-//   const { email } = req.body;
-//   try {
-//     const employee = await Employee.findOneAndUpdate(
-//       { email },
-//       {
-//         status: "Active",
-//         checkInTime: new Date(),
-//       },
-//       { new: true }
-//     );
-//     res.status(200).json(employee);
-//   } catch (err) {
-//     res.status(500).json({ message: "Check-in failed", error: err });
-//   }
-// });
-
-// // routes/employee.js/Checkout
-// router.post("/checkout", async (req, res) => {
-//   const { email } = req.body;
-//   try {
-//     const employee = await Employee.findOneAndUpdate(
-//       { email },
-//       {
-//         status: "Inactive",
-//         checkOutTime: new Date(),
-//       },
-//       { new: true }
-//     );
-//     res.status(200).json(employee);
-//   } catch (err) {
-//     res.status(500).json({ message: "Check-out failed", error: err });
-//   }
-// });
-
-// module.exports = { getEmployees, getEmployeesById, checkin, checkout };
-
 const Employee = require("../models/Employee");
 
 // GET all employees
@@ -143,6 +89,17 @@ const endBreak = async (req, res) => {
     res.status(500).json({ message: "Break end failed", error: err });
   }
 };
+const deleteEmployee = async (req, res) => {
+  try {
+    const employee = await Employee.findByIdAndDelete(req.params.id);
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+    res.status(200).json({ message: "Employee deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Error deleting employee", error: err });
+  }
+};
 
 module.exports = {
   getEmployees,
@@ -151,4 +108,5 @@ module.exports = {
   checkout,
   startBreak,
   endBreak,
+  deleteEmployee,
 };
